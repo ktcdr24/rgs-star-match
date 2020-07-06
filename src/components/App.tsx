@@ -1,10 +1,6 @@
-import React, {useState} from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import StarMatch from './StarMatch';
 
-export function App({ initialData }) {
-  return (
-    <div>
-      <StarMatch />
-    </div>
-  );
+export function App({ initialData }): FunctionComponent {
+  return <StarMatch />;
 }

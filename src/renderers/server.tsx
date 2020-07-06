@@ -12,6 +12,8 @@ export async function serverRenderer(): Promise<nestedObject> {
     title: `Hello ${initialData.appName}`,
   };
 
+  console.log('in server');
+
   return Promise.resolve({
     initialData,
     initialMarkup: ReactDOMServer.renderToString(
