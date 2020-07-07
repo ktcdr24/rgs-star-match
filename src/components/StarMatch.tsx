@@ -2,53 +2,24 @@ import React, { FunctionComponent, useState, useEffect } from 'react';
 
 import utils from '../utils/utils';
 import StarsDisplay from './StarsDisplay';
+import TimerDisplay from './TimerDisplay';
+import PlayNumber from './PlayNumber';
+import GameResult from './GameResult';
 
-const PlayNumber: FunctionComponent = (props) => {
-  return (
-    <button
-      key={props.number}
-      className="number"
-      style={{ backgroundColor: colors[props.status] }}
-      onClick={() => props.onClickHandler(props.number, props.status)}
-    >
-      {props.number}
-    </button>
+interface StarMatchProps {
+  starCount: number;
+  gameDurationSeconds: number;
+  startNewGame: () => void;
+}
+
+const StarMatch: FunctionComponent = (props: StarMatchProps) => {
+  const numStars = props.starCount;
+  const [stars, setStars] = useState(utils.random(1, numStars + 1));
+  const [availableNums, setAvailableNums] = useState(
+    utils.range(1, numStars + 1),
   );
-};
-
-const TimerDisplay: FunctionComponent = (props) => {
-  return <div>Timer Remaining: {props.value}</div>;
-};
-
-const GameResult: FunctionComponent = (props) => {
-  const gameIsWon = props.gameStatus === 'won';
-  const fontColor = gameIsWon ? 'Green' : 'Red';
-  if (gameIsWon) {
-    return (
-      <div className="game-done">
-        <div className="message" style={{ color: fontColor }}>
-          Congrats! You won the game.
-        </div>
-        <button onClick={props.startNewGame}>Play Again!</button>
-      </div>
-    );
-  } else {
-    return (
-      <div className="game-done">
-        <div className="message" style={{ color: fontColor }}>
-          Game Over!
-        </div>
-        <button onClick={props.startNewGame}>Play Again!</button>
-      </div>
-    );
-  }
-};
-
-const StarMatch: FunctionComponent = (props) => {
-  const [stars, setStars] = useState(utils.random(1, 10));
-  const [availableNums, setAvailableNums] = useState(utils.range(1, 10));
   const [candidateNums, setCandidateNums] = useState([]);
-  const [secondsLeft, setSecondsLeft] = useState(10);
+  const [secondsLeft, setSecondsLeft] = useState(props.gameDurationSeconds);
 
   const gameIsWon = availableNums.length === 0;
   const gameIsDone = gameIsWon || secondsLeft === 0;
@@ -64,7 +35,7 @@ const StarMatch: FunctionComponent = (props) => {
     }
   });
 
-  const onNumberClick = (number, status) => {
+  const onNumberClick = (number: number, status: string) => {
     console.log('Number clicked', number, status);
 
     const newCandidateNums =
@@ -103,13 +74,16 @@ const StarMatch: FunctionComponent = (props) => {
       <div className="body" style={{ display: 'flex' }}>
         <div className="left" style={{ border: '3px solid black' }}>
           {gameIsDone ? (
-            <GameResult gameStatus={gameIsWon ? 'won' : 'lost'} />
+            <GameResult
+              gameStatus={gameIsWon ? 'won' : 'lost'}
+              startNewGame={props.startNewGame}
+            />
           ) : (
-            <StarsDisplay stars={stars} />
+            <StarsDisplay numStars={stars} />
           )}
         </div>
         <div className="right" style={{ border: '3px solid black' }}>
-          {utils.range(1, 10).map((number) => (
+          {utils.range(1, numStars + 1).map((number) => (
             <PlayNumber
               key={number}
               number={number}
@@ -119,16 +93,9 @@ const StarMatch: FunctionComponent = (props) => {
           ))}
         </div>
       </div>
-      <TimerDisplay value={secondsLeft} />
+      <TimerDisplay secondsLeft={secondsLeft} />
     </div>
   );
-};
-
-const colors = {
-  available: 'lightgray',
-  used: 'lightgreen',
-  wrong: 'lightcoral',
-  candidate: 'deepskyblue',
 };
 
 export default StarMatch;

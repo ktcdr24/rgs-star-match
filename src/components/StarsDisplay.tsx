@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react';
 import utils from '../utils/utils';
 
 type StarsDisplayProps = {
-  stars: number;
+  numStars: number;
 };
 
 const StarsDisplay: FunctionComponent<StarsDisplayProps> = (
@@ -10,7 +10,7 @@ const StarsDisplay: FunctionComponent<StarsDisplayProps> = (
 ) => {
   return (
     <>
-      {utils.range(1, props.stars + 1).map((index) => (
+      {utils.range(1, props.numStars + 1).map((index) => (
         <div key={index} className="star"></div>
       ))}
     </>
