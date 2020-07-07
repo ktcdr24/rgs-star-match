@@ -16,7 +16,7 @@ const PlayNumber: FunctionComponent = (props) => {
   );
 };
 
-const StarMatch: FunctionComponent = () => {
+const StarMatch: FunctionComponent = (props) => {
   const [stars, setStars] = useState(utils.random(1, 10));
   const [availableNums, setAvailableNums] = useState(utils.range(1, 10));
   const [candidateNums, setCandidateNums] = useState([]);
@@ -43,6 +43,8 @@ const StarMatch: FunctionComponent = () => {
 
   const candidateNumsAreWrong = utils.sum(candidateNums) > stars;
 
+  const gameIsWon = availableNums.length === 0;
+
   const getNumberStats = (number: number) => {
     if (!availableNums.includes(number)) {
       return 'used';
@@ -50,7 +52,6 @@ const StarMatch: FunctionComponent = () => {
     if (candidateNums.includes(number)) {
       return candidateNumsAreWrong ? 'wrong' : 'candidate';
     }
-
     return 'available';
   };
 
@@ -59,7 +60,14 @@ const StarMatch: FunctionComponent = () => {
       Welcome to the StarMatch game!
       <div className="body" style={{ display: 'flex' }}>
         <div className="left" style={{ border: '3px solid black' }}>
-          <StarsDisplay stars={stars} />
+          {gameIsWon ? (
+            <div className="game-done">
+              <div className="message">Congrats! You won the game.</div>
+              <button onClick={props.startNewGame}>Play Again!</button>
+            </div>
+          ) : (
+            <StarsDisplay stars={stars} />
+          )}
         </div>
         <div className="right" style={{ border: '3px solid black' }}>
           {utils.range(1, 10).map((number) => (
