@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useState, useEffect } from 'react';
 
 import utils from '../utils/utils';
 import StarsDisplay from './StarsDisplay';
@@ -16,10 +16,53 @@ const PlayNumber: FunctionComponent = (props) => {
   );
 };
 
+const TimerDisplay: FunctionComponent = (props) => {
+  return <div>Timer Remaining: {props.value}</div>;
+};
+
+const GameResult: FunctionComponent = (props) => {
+  const gameIsWon = props.gameStatus === 'won';
+  const fontColor = gameIsWon ? 'Green' : 'Red';
+  if (gameIsWon) {
+    return (
+      <div className="game-done">
+        <div className="message" style={{ color: fontColor }}>
+          Congrats! You won the game.
+        </div>
+        <button onClick={props.startNewGame}>Play Again!</button>
+      </div>
+    );
+  } else {
+    return (
+      <div className="game-done">
+        <div className="message" style={{ color: fontColor }}>
+          Game Over!
+        </div>
+        <button onClick={props.startNewGame}>Play Again!</button>
+      </div>
+    );
+  }
+};
+
 const StarMatch: FunctionComponent = (props) => {
   const [stars, setStars] = useState(utils.random(1, 10));
   const [availableNums, setAvailableNums] = useState(utils.range(1, 10));
   const [candidateNums, setCandidateNums] = useState([]);
+  const [secondsLeft, setSecondsLeft] = useState(10);
+
+  const gameIsWon = availableNums.length === 0;
+  const gameIsDone = gameIsWon || secondsLeft === 0;
+
+  useEffect(() => {
+    if (secondsLeft > 0 && !gameIsDone) {
+      const timerId = setTimeout(() => {
+        setSecondsLeft(secondsLeft - 1);
+      }, 1000);
+      return () => {
+        clearTimeout(timerId);
+      };
+    }
+  });
 
   const onNumberClick = (number, status) => {
     console.log('Number clicked', number, status);
@@ -43,8 +86,6 @@ const StarMatch: FunctionComponent = (props) => {
 
   const candidateNumsAreWrong = utils.sum(candidateNums) > stars;
 
-  const gameIsWon = availableNums.length === 0;
-
   const getNumberStats = (number: number) => {
     if (!availableNums.includes(number)) {
       return 'used';
@@ -57,14 +98,12 @@ const StarMatch: FunctionComponent = (props) => {
 
   return (
     <div className="game">
-      Welcome to the StarMatch game!
+      <h1>Welcome to the StarMatch game</h1>
+      Pick 1 or more numbers that sum to the number of stars.
       <div className="body" style={{ display: 'flex' }}>
         <div className="left" style={{ border: '3px solid black' }}>
-          {gameIsWon ? (
-            <div className="game-done">
-              <div className="message">Congrats! You won the game.</div>
-              <button onClick={props.startNewGame}>Play Again!</button>
-            </div>
+          {gameIsDone ? (
+            <GameResult gameStatus={gameIsWon ? 'won' : 'lost'} />
           ) : (
             <StarsDisplay stars={stars} />
           )}
@@ -80,6 +119,7 @@ const StarMatch: FunctionComponent = (props) => {
           ))}
         </div>
       </div>
+      <TimerDisplay value={secondsLeft} />
     </div>
   );
 };

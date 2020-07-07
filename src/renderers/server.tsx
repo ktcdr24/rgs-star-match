@@ -9,7 +9,7 @@ export async function serverRenderer(): Promise<nestedObject> {
   };
 
   const pageData = {
-    title: `Hello ${initialData.appName}`,
+    title: `StarMatch`,
   };
 
   console.log('in server');

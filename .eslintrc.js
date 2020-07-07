@@ -29,5 +29,7 @@ module.exports = {
   rules: {
     'react/prop-types': 'off',
     'react/no-unescaped-entities': ['error', { forbid: ['>', '}'] }],
+    'react-hooks/rules-of-hooks': 'error', // Checks rules of Hooks
+    'react-hooks/exhaustive-deps': 'warn', // Checks effect dependencies
   },
 };
